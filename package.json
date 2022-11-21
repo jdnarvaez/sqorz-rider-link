@@ -43,7 +43,10 @@
     "start": "cross-env NODE_ENV=development webpack serve --hot --host 0.0.0.0 --config=./webpack.dev.config.js --mode development --port 3000",
     "build": "cross-env NODE_ENV=production webpack --config webpack.build.config.js --mode production",
     "package": "npm run build",
-    "postpackage": "rimraf ./builds && electron-packager ./ --out=./builds/windows --overwrite --asar=true --platform=win32 --arch=ia32"
+    "postpackage": "rimraf ./builds && electron-packager ./ --out=./builds/windows --overwrite --asar=true --platform=win32 --arch=ia32",
+    "release:major": "node --experimental-json-modules ./packaging/release-major.js",
+    "release:minor": "node --experimental-json-modules ./packaging/release-minor.js",
+    "release:bugfix": "node --experimental-json-modules ./packaging/release-bugfix.js"
   },
   "dependencies": {
     "@babel/plugin-proposal-class-properties": "^7.18.6",
