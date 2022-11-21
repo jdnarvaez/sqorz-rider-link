@@ -1,0 +1,40 @@
+.appForm {
+    display: flex;
+    flex-direction: column;
+    margin:20px;
+    padding: 20px;
+}
+
+.appForm > div {
+    margin: 10px;
+}
+
+.buttons {
+    margin: 10px;
+    display: flex;
+    flex-direction: row;
+}
+
+.buttons > button {
+    margin: 10px;
+}
+
+.formInput {
+    display: flex;
+    flex-direction: column;
+}
+
+.inputGroup {
+    display: flex;
+    flex-direction: row;
+    flex-grow: 1;
+    width: 100%;
+}
+
+.inputGroup > input {
+    flex-grow: 1;
+}
+
+.inputGroup > button {
+    margin-right: 10px;
+}

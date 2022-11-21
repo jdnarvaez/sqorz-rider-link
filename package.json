@@ -1,0 +1,81 @@
+{
+  "name": "sqorz-rider-link",
+  "productName": "Sqorz Rider Link",
+  "version": "0.0.12",
+  "description": "Utility to output JSON data for vMix from sqorz and USA BMX rider information",
+  "license": "MIT",
+  "private": false,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jdnarvaez/sqorz-rider-link.git"
+  },
+  "homepage": "",
+  "bugs": {
+    "url": "https://github.com/jdnarvaez/sqorz-rider-link/issues"
+  },
+  "author": {
+    "name": "Juan Narvaez",
+    "email": "jdnarvaez@gmail.com",
+    "url": "https://github.com/jdnarvaez"
+  },
+  "keywords": [
+    "app",
+    "electron",
+    "open",
+    "open-source",
+    "postcss",
+    "react",
+    "reactjs",
+    "source",
+    "webpack"
+  ],
+  "engines": {
+    "node": ">=9.0.0",
+    "npm": ">=5.0.0",
+    "yarn": ">=1.0.0"
+  },
+  "browserslist": [
+    "last 4 versions"
+  ],
+  "main": "main.js",
+  "scripts": {
+    "prod": "cross-env NODE_ENV=production webpack --mode production --config webpack.build.config.js && electron --noDevServer .",
+    "start": "cross-env NODE_ENV=development webpack serve --hot --host 0.0.0.0 --config=./webpack.dev.config.js --mode development --port 3000",
+    "build": "cross-env NODE_ENV=production webpack --config webpack.build.config.js --mode production",
+    "package": "npm run build",
+    "postpackage": "rimraf ./builds && electron-packager ./ --out=./builds/windows --overwrite --asar=true --platform=win32 --arch=ia32"
+  },
+  "dependencies": {
+    "electron-log": "^4.4.6",
+    "fast-csv": "^4.3.6",
+    "node-fetch": "^2.6.7",
+    "postcss": "^8.4.5",
+    "prepend-http": "^4.0.0",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.16.5",
+    "@babel/preset-env": "^7.16.5",
+    "@babel/preset-react": "^7.16.5",
+    "babel-loader": "^8.2.3",
+    "cross-env": "^7.0.3",
+    "css-loader": "^6.5.1",
+    "electron": "^16.0.5",
+    "electron-devtools-installer": "^3.2.0",
+    "electron-packager": "^15.4.0",
+    "file-loader": "^6.2.0",
+    "html-webpack-plugin": "^5.5.0",
+    "mini-css-extract-plugin": "^2.4.5",
+    "postcss-import": "^14.0.2",
+    "postcss-loader": "^6.2.1",
+    "postcss-nested": "^5.0.6",
+    "postcss-preset-env": "^7.1.0",
+    "postcss-pxtorem": "^6.0.0",
+    "rimraf": "^3.0.2",
+    "style-loader": "^3.3.1",
+    "webpack": "^5.65.0",
+    "webpack-cli": "^4.9.1",
+    "webpack-dev-server": "^3.11.3"
+  }
+}
