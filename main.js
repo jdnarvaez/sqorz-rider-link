@@ -46,7 +46,8 @@ const classes = [
   "Flat Boys",
   "Overall Women",
   "Overall Men",
-  "Sector Time",
+  "Sector Time Women",
+  "Sector Time Men",
 ];
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -308,8 +309,8 @@ async function poll(opts) {
     const responses = await Promise.all(requests);
 
     if (includeSectorTime) {
-      let sectorTimes = await fetch(
-        `https://our.sqorz.com/json/leaderboard/${weekendRaceID}/usabmx?eventType=combined&sortBy=sectorTime`
+      let womensSectorTimes = await fetch(
+        `https://our.sqorz.com/json/leaderboard/${weekendRaceID}/usabmx?eventType=combined&sortBy=sectorTime&gender=female`
       ).then(async (r) => {
         try {
           const text = await r.text();
@@ -319,7 +320,20 @@ async function poll(opts) {
         }
       });
 
-      responses.push(sectorTimes.map((rider) => mapRider(riders, rider)));
+      responses.push(womensSectorTimes.map((rider) => mapRider(riders, rider)));
+
+      let mensSectorTimes = await fetch(
+        `https://our.sqorz.com/json/leaderboard/${weekendRaceID}/usabmx?eventType=combined&sortBy=sectorTime&gender=male`
+      ).then(async (r) => {
+        try {
+          const text = await r.text();
+          return await JSON.parse(text);
+        } catch (err) {
+          return [];
+        }
+      });
+
+      responses.push(mensSectorTimes.map((rider) => mapRider(riders, rider)));
     }
 
     responses.forEach((response, idx) => {
