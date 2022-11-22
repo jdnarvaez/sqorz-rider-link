@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React, { useCallback, useEffect, useState } from "react"
 import { ipcRenderer as ipc } from 'electron';
 
 import "./Form.css"
@@ -10,6 +10,7 @@ const Form = () => {
 
     const [riderCSVFile, setRiderCSVFile] = useState(localStorage.getItem('riderCSVFile') || '');
     const [outputFile, setOutputFile] = useState(localStorage.getItem('outputFile') || '');
+    const [includeSectorTime, setIncludeSectorTime] = useState(true);
 
     useEffect(() => {
       const selectDirectory = (event, args) => {
@@ -29,14 +30,15 @@ const Form = () => {
       }
     }, []);
 
-    const start = () => {
+    const start = (opts) => {
       setPolling(true);
-      ipc.send('start-poll', {
+      ipc.send('start-poll', Object.assign({
         raceID,
         weekendRaceID,
         riderCSVFile,
-        outputFile
-      })
+        outputFile,
+        includeSectorTime
+      }, opts))
     }
 
     const stop = () => {
@@ -51,7 +53,17 @@ const Form = () => {
     const browseForOutputDirectory = () => {
       ipc.send('select-directory', '');
     }
-        
+
+    const toggleSectorTime = () => {
+      const shouldIncludeSectorTime = !includeSectorTime;
+      setIncludeSectorTime(shouldIncludeSectorTime);
+
+      if (polling) {
+        stop();
+        start({ includeSectorTime: shouldIncludeSectorTime});
+      }
+    };
+
     return (
       <div className="appForm">
         <div className="formInput">
@@ -80,8 +92,16 @@ const Form = () => {
           </div>
         </div>
 
+        <div className="formInput" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '8px' }}>
+          <label className="switch">
+            <input type="checkbox" checked={includeSectorTime} onChange={toggleSectorTime} />
+            <div className="slider"></div>
+          </label>
+          <div>Include sector time</div>
+        </div>
+
         <div className="buttons">
-          <button onClick={start} disabled={polling}>Start</button>
+          <button onClick={() => start()} disabled={polling}>Start</button>
           <button onClick={stop} disabled={!polling}>Stop</button>
           <button onClick={() => ipc.send('show-log', '')}>View Log</button>
         </div>

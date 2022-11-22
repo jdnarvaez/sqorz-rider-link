@@ -26,4 +26,4 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            builds/windows/sqorz-rider-link-win32-ia32/**/*
+            builds/windows/sqorz-rider-link-win32-ia32.zip
