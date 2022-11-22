@@ -1,0 +1,21 @@
+{
+  // JavaScript/TypeScript (we can add other settings here later)
+  "[javascript][javascriptreact][typescript][typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  },
+  // Files we just want to prettify
+  "[html][css][scss][json][jsonc][markdown]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  },
+  "[typescriptreact][typescript]": {
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": false
+    }
+  },
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  "markdown.extension.toc.levels": "3..6"
+}

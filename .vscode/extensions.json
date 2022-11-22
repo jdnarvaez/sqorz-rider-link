@@ -1,0 +1,11 @@
+{
+  "recommendations": [
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "mikestead.dotenv",
+    "github.vscode-pull-request-github",
+    "wix.vscode-import-cost",
+    "eg2.vscode-npm-script",
+    "silvenon.mdx"
+  ]
+}
