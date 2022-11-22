@@ -44,6 +44,7 @@ const classes = [
   'Flat Boys',
   'Overall Women',
   'Overall Men',
+  'Sector Time'
 ];
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -73,7 +74,7 @@ function createWindow() {
   // Create the browser window.
   mainWindow = new BrowserWindow({
     width: 800,
-    height: 400,
+    height: 475,
     show: false,
     webPreferences: {
       nodeIntegration: true,
@@ -232,12 +233,13 @@ async function poll(opts) {
       riders,
       raceID,
       weekendRaceID,
-      outputFile
+      outputFile,
+      includeSectorTime,
     } = opts;
 
     fs.mkdirSync(outputFile, { recursive: true });
     
-    const responses = await Promise.all([
+    const requests = [
       fetch(`https://our.sqorz.com/json/leaderboard/${raceID}/usabmx?eventType=race&proficiencyCode=A`).then(r => r.json()),
       fetch(`https://our.sqorz.com/json/leaderboard/${raceID}/usabmx?eventType=race&proficiencyCode=Z`).then(r => r.json()),
       fetch(`https://our.sqorz.com/json/leaderboard/${raceID}/usabmx?eventType=race&proficiencyCode=V`).then(r => r.json()),
@@ -251,7 +253,13 @@ async function poll(opts) {
       fetch(`https://our.sqorz.com/json/leaderboard/${raceID}/usabmx?eventType=race&proficiencyCode=E&minAge=5&maxAge=12`).then(r => r.json()),
       fetch(`https://our.sqorz.com/json/leaderboard/${weekendRaceID}/usabmx?eventType=race&gender=female`).then(r => r.json()),
       fetch(`https://our.sqorz.com/json/leaderboard/${weekendRaceID}/usabmx?eventType=race&gender=male`).then(r => r.json()),
-    ]);
+    ];
+
+    if (includeSectorTime) {
+      requests.push(fetch(`https://our.sqorz.com/json/leaderboard/${weekendRaceID}/usabmx?eventType=combined&sortBy=sectorTime`).then(r => r.json()))
+    }
+
+    const responses = await Promise.all(requests);
 
     responses.forEach((response, idx) => { 
       const data = response.map((r) => { 
@@ -262,7 +270,7 @@ async function poll(opts) {
       fs.writeFileSync(path.resolve(outputFile, `${classes[idx].replace(' ', '_')}.json`), JSON.stringify(data));
     });
 
-    const top_riders = await Promise.all(responses.map(response => mapRider(riders, response[0])));
+    const top_riders = await Promise.all(responses.slice(0, responses.length).map(response => mapRider(riders, response[0])));
 
     try {
       fs.writeFileSync(path.resolve(outputFile, 'top_riders.json'), JSON.stringify(top_riders));
