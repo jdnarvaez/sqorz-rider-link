@@ -173,11 +173,11 @@ async function mapRider(riders, rider) {
   if (!rider) {
     log.warn(`No rider found in Sqorz JSON Response`);
     return {};
+  }
 
-    if (!rider.id) {
-      log.warn(`No rider data found in Sqorz JSON Response`);
-      return {};
-    }
+  if (!rider.id) {
+    log.warn(`No rider data found in Sqorz JSON Response`);
+    return rider;
   }
 
   // Member_SN -> id
@@ -239,18 +239,16 @@ async function mapRider(riders, rider) {
       hometown,
       photo: photo && photo.trim() != "" ? photo : GENERIC_PHOTO_URL,
     };
-  } else {
-    log.warn(
-      `Unable to find rider information for ${rider.name} ID ${rider.id} in CSV`
-    );
-
-    return {
-      name: rider.name,
-      photo: GENERIC_PHOTO_URL,
-    };
   }
 
-  return {};
+  log.warn(
+    `Unable to find rider information for ${rider.name} ID ${rider.id} in CSV`
+  );
+
+  return {
+    name: rider.name,
+    photo: GENERIC_PHOTO_URL,
+  };
 }
 
 async function poll(opts) {
@@ -320,7 +318,11 @@ async function poll(opts) {
         }
       });
 
-      responses.push(womensSectorTimes.map((rider) => mapRider(riders, rider)));
+      const mappedWomensSectorTimes = await Promise.all(
+        womensSectorTimes.map(async (rider) => await mapRider(riders, rider))
+      );
+
+      responses.push(mappedWomensSectorTimes);
 
       let mensSectorTimes = await fetch(
         `https://our.sqorz.com/json/leaderboard/${weekendRaceID}/usabmx?eventType=combined&sortBy=sectorTime&gender=male`
@@ -333,7 +335,11 @@ async function poll(opts) {
         }
       });
 
-      responses.push(mensSectorTimes.map((rider) => mapRider(riders, rider)));
+      const mappedMensSectorTimes = await Promise.all(
+        mensSectorTimes.map(async (rider) => await mapRider(riders, rider))
+      );
+
+      responses.push(mappedMensSectorTimes);
     }
 
     responses.forEach((response, idx) => {
