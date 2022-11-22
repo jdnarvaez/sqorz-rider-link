@@ -1,0 +1,33 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "module": "es6",
+    "moduleResolution": "node",
+    "strict": true,
+    "skipLibCheck": false,
+    "declaration": true,
+    "sourceMap": true,
+    "declarationMap": true,
+    "importHelpers": true,
+    "removeComments": true,
+    "esModuleInterop": true,
+    "allowJs": true,
+    "pretty": true,
+    "newLine": "lf",
+    "outDir": "dist",
+    "rootDir": "src",
+    "strictNullChecks": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noEmitHelpers": false,
+    "baseUrl": ".",
+    "jsx": "react",
+    "paths": {
+      "@src/*": ["src/*"]
+    }
+  },
+  "include": ["src/**/*.ts"]
+}
