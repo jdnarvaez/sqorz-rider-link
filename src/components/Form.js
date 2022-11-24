@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { ipcRenderer as ipc } from "electron";
+import Select from "react-dropdown-select";
 
 import "./Form.css";
 
@@ -17,6 +18,22 @@ const Form = () => {
     localStorage.getItem("outputFile") || ""
   );
   const [includeSectorTime, setIncludeSectorTime] = useState(true);
+
+  const eventTypeOptions = [
+    { label: "Race", value: "race" },
+    { label: "Training", value: "training" },
+  ];
+
+  const [eventType, setEventType] = useState(
+    eventTypeOptions.find(
+      (opt) => opt.value === localStorage.getItem("eventType")
+    ) || eventTypeOptions[0]
+  );
+
+  const selectEventType = useCallback((opt) => {
+    localStorage.setItem("eventType", opt.value);
+    setEventType(opt);
+  }, []);
 
   useEffect(() => {
     const selectDirectory = (event, args) => {
@@ -47,6 +64,7 @@ const Form = () => {
           riderCSVFile,
           outputFile,
           includeSectorTime,
+          eventType: eventType.value,
         },
         opts
       )
@@ -136,6 +154,17 @@ const Form = () => {
               setOutputFile(e.target.value);
               localStorage.setItem("outputFile", e.target.value);
             }}
+          />
+        </div>
+      </div>
+
+      <div className="formInput">
+        <label>Event Type</label>
+        <div className="inputGroup">
+          <Select
+            options={eventTypeOptions}
+            onChange={(values) => selectEventType(values[0])}
+            values={[eventType]}
           />
         </div>
       </div>

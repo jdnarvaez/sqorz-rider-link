@@ -80,7 +80,7 @@ function createWindow() {
   // Create the browser window.
   mainWindow = new BrowserWindow({
     width: 800,
-    height: 475,
+    height: 525,
     show: false,
     webPreferences: {
       nodeIntegration: true,
@@ -257,50 +257,56 @@ async function poll(opts) {
       return;
     }
 
-    const { riders, raceID, weekendRaceID, outputFile, includeSectorTime } =
-      opts;
+    const {
+      riders,
+      raceID,
+      weekendRaceID,
+      outputFile,
+      includeSectorTime,
+      eventType = "race",
+    } = opts;
 
     fs.mkdirSync(outputFile, { recursive: true });
 
     const requests = [
       fetch(
-        `https://our.sqorz.com/json/leaderboard/${raceID}/usabmx?eventType=race&proficiencyCode=A`
+        `https://our.sqorz.com/json/leaderboard/${raceID}/usabmx?eventType=${eventType}&proficiencyCode=A`
       ).then((r) => r.json()),
       fetch(
-        `https://our.sqorz.com/json/leaderboard/${raceID}/usabmx?eventType=race&proficiencyCode=Z`
+        `https://our.sqorz.com/json/leaderboard/${raceID}/usabmx?eventType=${eventType}&proficiencyCode=Z`
       ).then((r) => r.json()),
       fetch(
-        `https://our.sqorz.com/json/leaderboard/${raceID}/usabmx?eventType=race&proficiencyCode=V`
+        `https://our.sqorz.com/json/leaderboard/${raceID}/usabmx?eventType=${eventType}&proficiencyCode=V`
       ).then((r) => r.json()),
       fetch(
-        `https://our.sqorz.com/json/leaderboard/${raceID}/usabmx?eventType=race&proficiencyCode=H`
+        `https://our.sqorz.com/json/leaderboard/${raceID}/usabmx?eventType=${eventType}&proficiencyCode=H`
       ).then((r) => r.json()),
       fetch(
-        `https://our.sqorz.com/json/leaderboard/${raceID}/usabmx?eventType=race&proficiencyCode=C`
+        `https://our.sqorz.com/json/leaderboard/${raceID}/usabmx?eventType=${eventType}&proficiencyCode=C`
       ).then((r) => r.json()),
       fetch(
-        `https://our.sqorz.com/json/leaderboard/${raceID}/usabmx?eventType=race&proficiencyCode=N`
+        `https://our.sqorz.com/json/leaderboard/${raceID}/usabmx?eventType=${eventType}&proficiencyCode=N`
       ).then((r) => r.json()),
       fetch(
-        `https://our.sqorz.com/json/leaderboard/${raceID}/usabmx?eventType=race&proficiencyCode=I`
+        `https://our.sqorz.com/json/leaderboard/${raceID}/usabmx?eventType=${eventType}&proficiencyCode=I`
       ).then((r) => r.json()),
       fetch(
-        `https://our.sqorz.com/json/leaderboard/${raceID}/usabmx?eventType=race&proficiencyCode=G`
+        `https://our.sqorz.com/json/leaderboard/${raceID}/usabmx?eventType=${eventType}&proficiencyCode=G`
       ).then((r) => r.json()),
       fetch(
-        `https://our.sqorz.com/json/leaderboard/${raceID}/usabmx?eventType=race&proficiencyCode=E`
+        `https://our.sqorz.com/json/leaderboard/${raceID}/usabmx?eventType=${eventType}&proficiencyCode=E`
       ).then((r) => r.json()),
       fetch(
-        `https://our.sqorz.com/json/leaderboard/${raceID}/usabmx?eventType=race&proficiencyCode=G&minAge=5&maxAge=12`
+        `https://our.sqorz.com/json/leaderboard/${raceID}/usabmx?eventType=${eventType}&proficiencyCode=G&minAge=5&maxAge=12`
       ).then((r) => r.json()),
       fetch(
-        `https://our.sqorz.com/json/leaderboard/${raceID}/usabmx?eventType=race&proficiencyCode=E&minAge=5&maxAge=12`
+        `https://our.sqorz.com/json/leaderboard/${raceID}/usabmx?eventType=${eventType}&proficiencyCode=E&minAge=5&maxAge=12`
       ).then((r) => r.json()),
       fetch(
-        `https://our.sqorz.com/json/leaderboard/${weekendRaceID}/usabmx?eventType=race&gender=female`
+        `https://our.sqorz.com/json/leaderboard/${weekendRaceID}/usabmx?eventType=${eventType}&gender=female`
       ).then((r) => r.json()),
       fetch(
-        `https://our.sqorz.com/json/leaderboard/${weekendRaceID}/usabmx?eventType=race&gender=male`
+        `https://our.sqorz.com/json/leaderboard/${weekendRaceID}/usabmx?eventType=${eventType}&gender=male`
       ).then((r) => r.json()),
     ];
 
