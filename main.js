@@ -297,10 +297,10 @@ async function poll(opts) {
         `https://our.sqorz.com/json/leaderboard/${raceID}/usabmx?eventType=${eventType}&proficiencyCode=E`
       ).then((r) => r.json()),
       fetch(
-        `https://our.sqorz.com/json/leaderboard/${raceID}/usabmx?eventType=${eventType}&proficiencyCode=G&minAge=5&maxAge=12`
+        `https://our.sqorz.com/json/leaderboard/${raceID}/usabmx?eventType=${eventType}&gender=female&minAge=5&maxAge=12`
       ).then((r) => r.json()),
       fetch(
-        `https://our.sqorz.com/json/leaderboard/${raceID}/usabmx?eventType=${eventType}&proficiencyCode=E&minAge=5&maxAge=12`
+        `https://our.sqorz.com/json/leaderboard/${raceID}/usabmx?eventType=${eventType}&gender=male&minAge=5&maxAge=12`
       ).then((r) => r.json()),
       fetch(
         `https://our.sqorz.com/json/leaderboard/${weekendRaceID}/usabmx?eventType=${eventType}&gender=female`
