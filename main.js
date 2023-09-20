@@ -32,24 +32,6 @@ function prependHttp(url, { https = true } = {}) {
   return url.replace(/^(?!(?:\w+?:)?\/\/)/, https ? "https://" : "http://");
 }
 
-const classes = [
-  "Men Pro",
-  "Women Pro",
-  "Vet Pro",
-  "Girl Cruiser",
-  "Cruiser",
-  "Novice",
-  "Intermediate",
-  "Girls Expert",
-  "Expert",
-  "Flat Girls",
-  "Flat Boys",
-  "Overall Women",
-  "Overall Men",
-  "Sector Time Women",
-  "Sector Time Men",
-];
-
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
@@ -80,7 +62,7 @@ function createWindow() {
   // Create the browser window.
   mainWindow = new BrowserWindow({
     width: 800,
-    height: 525,
+    height: 550,
     show: false,
     webPreferences: {
       nodeIntegration: true,
@@ -263,8 +245,47 @@ async function poll(opts) {
       weekendRaceID,
       outputFile,
       includeSectorTime,
+      includeHillTime,
       eventType = "race",
     } = opts;
+
+    let classes = [
+      "Men Pro",
+      "Women Pro",
+      "Vet Pro",
+      "Girl Cruiser",
+      "Cruiser",
+      "Novice",
+      "Intermediate",
+      "Girls Expert",
+      "Expert",
+      "Flat Girls",
+      "Flat Boys",
+      "Overall Women",
+      "Overall Men",
+    ];
+
+    if (includeSectorTime) {
+      classes = [
+        ...classes,
+        "Sector Time Women",
+        "Sector Time Men",
+        "Sector Overall Men",
+        "Sector Overall Women",
+        "Sector Male Flats",
+        "Sector Female Flats",
+      ];
+    }
+
+    if (includeHillTime) {
+      classes = [
+        ...classes,
+        "Hill Time Male",
+        "Hill Time Female",
+        "Hill Time Flats Male",
+        "Hill Time Flats Female",
+      ];
+    }
 
     fs.mkdirSync(outputFile, { recursive: true });
 
@@ -346,6 +367,150 @@ async function poll(opts) {
       );
 
       responses.push(mappedMensSectorTimes);
+
+      let sectorOverallMensTimes = await fetch(
+        `https://our.sqorz.com/json/leaderboard/${raceID}/usabmx?eventType=combined&sortBy=sectorTime&gender=male`
+      ).then(async (r) => {
+        try {
+          const text = await r.text();
+          return await JSON.parse(text);
+        } catch (err) {
+          return [];
+        }
+      });
+
+      const mappedMensOverallSectorTimes = await Promise.all(
+        sectorOverallMensTimes.map(
+          async (rider) => await mapRider(riders, rider)
+        )
+      );
+
+      responses.push(mappedMensOverallSectorTimes);
+
+      let sectorOverallWomensTimes = await fetch(
+        `https://our.sqorz.com/json/leaderboard/${raceID}/usabmx?eventType=combined&sortBy=sectorTime&gender=female`
+      ).then(async (r) => {
+        try {
+          const text = await r.text();
+          return await JSON.parse(text);
+        } catch (err) {
+          return [];
+        }
+      });
+
+      const mappedWomensOverallSectorTimes = await Promise.all(
+        sectorOverallWomensTimes.map(
+          async (rider) => await mapRider(riders, rider)
+        )
+      );
+
+      responses.push(mappedWomensOverallSectorTimes);
+
+      let sectorMaleFlatsTimes = await fetch(
+        `https://our.sqorz.com/json/leaderboard/${raceID}/usabmx?eventType=combined&sortBy=sectorTime&gender=male&maxAge=12`
+      ).then(async (r) => {
+        try {
+          const text = await r.text();
+          return await JSON.parse(text);
+        } catch (err) {
+          return [];
+        }
+      });
+
+      const mappedSectorMaleFlatsTimes = await Promise.all(
+        sectorMaleFlatsTimes.map(async (rider) => await mapRider(riders, rider))
+      );
+
+      responses.push(mappedSectorMaleFlatsTimes);
+
+      let sectorFemaleFlatsTimes = await fetch(
+        `https://our.sqorz.com/json/leaderboard/${raceID}/usabmx?eventType=combined&sortBy=sectorTime&gender=female&maxAge=12`
+      ).then(async (r) => {
+        try {
+          const text = await r.text();
+          return await JSON.parse(text);
+        } catch (err) {
+          return [];
+        }
+      });
+
+      const mappedSectorFemaleFlatsTimes = await Promise.all(
+        sectorFemaleFlatsTimes.map(
+          async (rider) => await mapRider(riders, rider)
+        )
+      );
+
+      responses.push(mappedSectorFemaleFlatsTimes);
+    }
+
+    if (includeHillTime) {
+      let mensHillTimes = await fetch(
+        `https://our.sqorz.com/json/leaderboard/${weekendRaceID}/usabmx?eventType=combined&sortBy=hillTime&gender=male`
+      ).then(async (r) => {
+        try {
+          const text = await r.text();
+          return await JSON.parse(text);
+        } catch (err) {
+          return [];
+        }
+      });
+
+      const mappedMensHillTimes = await Promise.all(
+        mensHillTimes.map(async (rider) => await mapRider(riders, rider))
+      );
+
+      responses.push(mappedMensHillTimes);
+
+      let womensHillTimes = await fetch(
+        `https://our.sqorz.com/json/leaderboard/${weekendRaceID}/usabmx?eventType=combined&sortBy=hillTime&gender=female`
+      ).then(async (r) => {
+        try {
+          const text = await r.text();
+          return await JSON.parse(text);
+        } catch (err) {
+          return [];
+        }
+      });
+
+      const mappedWomensHillTimes = await Promise.all(
+        womensHillTimes.map(async (rider) => await mapRider(riders, rider))
+      );
+
+      responses.push(mappedWomensHillTimes);
+
+      let mensFlatsHillTimes = await fetch(
+        `https://our.sqorz.com/json/leaderboard/${weekendRaceID}/usabmx?eventType=combined&sortBy=hillTime&gender=male&maxAge=12`
+      ).then(async (r) => {
+        try {
+          const text = await r.text();
+          return await JSON.parse(text);
+        } catch (err) {
+          return [];
+        }
+      });
+
+      const mappedMensFlatsHillTimes = await Promise.all(
+        mensFlatsHillTimes.map(async (rider) => await mapRider(riders, rider))
+      );
+
+      responses.push(mappedMensFlatsHillTimes);
+
+      let womensFlatsHillTimes = await fetch(
+        `https://our.sqorz.com/json/leaderboard/${weekendRaceID}/usabmx?eventType=combined&sortBy=hillTime&gender=female&maxAge=12`
+      ).then(async (r) => {
+        try {
+          const text = await r.text();
+          return await JSON.parse(text);
+        } catch (err) {
+          return [];
+        }
+      });
+
+      const mappedWomensFlatsHillTimes = await Promise.all(
+        womensFlatsHillTimes.map(async (rider) => await mapRider(riders, rider))
+      );
+
+      responses.push(mappedWomensFlatsHillTimes);
     }
 
     responses.forEach((response, idx) => {

@@ -17,7 +17,10 @@ const Form = () => {
   const [outputFile, setOutputFile] = useState(
     localStorage.getItem("outputFile") || ""
   );
+
   const [includeSectorTime, setIncludeSectorTime] = useState(true);
+
+  const [includeHillTime, setIncludeHillTime] = useState(true);
 
   const eventTypeOptions = [
     { label: "Race", value: "race" },
@@ -64,6 +67,7 @@ const Form = () => {
           riderCSVFile,
           outputFile,
           includeSectorTime,
+          includeHillTime,
           eventType: eventType.value,
         },
         opts
@@ -91,6 +95,16 @@ const Form = () => {
     if (polling) {
       stop();
       start({ includeSectorTime: shouldIncludeSectorTime });
+    }
+  };
+
+  const toggleHillTime = () => {
+    const shouldIncludeHillTime = !includeHillTime;
+    setIncludeHillTime(shouldIncludeHillTime);
+
+    if (polling) {
+      stop();
+      start({ includeHillTime: shouldIncludeHillTime });
     }
   };
 
@@ -187,6 +201,26 @@ const Form = () => {
           <div className="slider"></div>
         </label>
         <div>Include sector time</div>
+      </div>
+
+      <div
+        className="formInput"
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
+          gap: "8px",
+        }}
+      >
+        <label className="switch">
+          <input
+            type="checkbox"
+            checked={includeHillTime}
+            onChange={toggleHillTime}
+          />
+          <div className="slider"></div>
+        </label>
+        <div>Include hill time</div>
       </div>
 
       <div className="buttons">
