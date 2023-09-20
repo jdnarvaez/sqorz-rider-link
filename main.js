@@ -390,6 +390,12 @@ async function poll(opts) {
         )
           .then((r) => r.json())
           .catch((e) => []),
+      ];
+    }
+
+    if (includeHillTime) {
+      requests = [
+        ...requests,
         fetch(
           `https://our.sqorz.com/json/leaderboard/${weekendRaceID}/usabmx?eventType=combined&sortBy=hillTime&gender=male`
         )
@@ -415,194 +421,11 @@ async function poll(opts) {
 
     const responses = await Promise.all(requests);
 
-    // if (includeSectorTime) {
-    //   let womensSectorTimes = await fetch(
-    //     `https://our.sqorz.com/json/leaderboard/${weekendRaceID}/usabmx?eventType=combined&sortBy=sectorTime&gender=female`
-    //   ).then(async (r) => {
-    //     try {
-    //       const text = await r.text();
-    //       return await JSON.parse(text);
-    //     } catch (err) {
-    //       return [];
-    //     }
-    //   });
-
-    //   const mappedWomensSectorTimes = await Promise.all(
-    //     womensSectorTimes.map(async (rider) => await mapRider(riders, rider))
-    //   );
-
-    //   responses.push(mappedWomensSectorTimes);
-
-    //   let mensSectorTimes = await fetch(
-    //     `https://our.sqorz.com/json/leaderboard/${weekendRaceID}/usabmx?eventType=combined&sortBy=sectorTime&gender=male`
-    //   ).then(async (r) => {
-    //     try {
-    //       const text = await r.text();
-    //       return await JSON.parse(text);
-    //     } catch (err) {
-    //       return [];
-    //     }
-    //   });
-
-    //   const mappedMensSectorTimes = await Promise.all(
-    //     mensSectorTimes.map(async (rider) => await mapRider(riders, rider))
-    //   );
-
-    //   responses.push(mappedMensSectorTimes);
-
-    //   let sectorOverallMensTimes = await fetch(
-    //     `https://our.sqorz.com/json/leaderboard/${raceID}/usabmx?eventType=combined&sortBy=sectorTime&gender=male`
-    //   ).then(async (r) => {
-    //     try {
-    //       const text = await r.text();
-    //       return await JSON.parse(text);
-    //     } catch (err) {
-    //       return [];
-    //     }
-    //   });
-
-    //   const mappedMensOverallSectorTimes = await Promise.all(
-    //     sectorOverallMensTimes.map(
-    //       async (rider) => await mapRider(riders, rider)
-    //     )
-    //   );
-
-    //   responses.push(mappedMensOverallSectorTimes);
-
-    //   let sectorOverallWomensTimes = await fetch(
-    //     `https://our.sqorz.com/json/leaderboard/${raceID}/usabmx?eventType=combined&sortBy=sectorTime&gender=female`
-    //   ).then(async (r) => {
-    //     try {
-    //       const text = await r.text();
-    //       return await JSON.parse(text);
-    //     } catch (err) {
-    //       return [];
-    //     }
-    //   });
-
-    //   const mappedWomensOverallSectorTimes = await Promise.all(
-    //     sectorOverallWomensTimes.map(
-    //       async (rider) => await mapRider(riders, rider)
-    //     )
-    //   );
-
-    //   responses.push(mappedWomensOverallSectorTimes);
-
-    //   let sectorMaleFlatsTimes = await fetch(
-    //     `https://our.sqorz.com/json/leaderboard/${raceID}/usabmx?eventType=combined&sortBy=sectorTime&gender=male&maxAge=12`
-    //   ).then(async (r) => {
-    //     try {
-    //       const text = await r.text();
-    //       return await JSON.parse(text);
-    //     } catch (err) {
-    //       return [];
-    //     }
-    //   });
-
-    //   const mappedSectorMaleFlatsTimes = await Promise.all(
-    //     sectorMaleFlatsTimes.map(async (rider) => await mapRider(riders, rider))
-    //   );
-
-    //   responses.push(mappedSectorMaleFlatsTimes);
-
-    //   let sectorFemaleFlatsTimes = await fetch(
-    //     `https://our.sqorz.com/json/leaderboard/${raceID}/usabmx?eventType=combined&sortBy=sectorTime&gender=female&maxAge=12`
-    //   ).then(async (r) => {
-    //     try {
-    //       const text = await r.text();
-    //       return await JSON.parse(text);
-    //     } catch (err) {
-    //       return [];
-    //     }
-    //   });
-
-    //   const mappedSectorFemaleFlatsTimes = await Promise.all(
-    //     sectorFemaleFlatsTimes.map(
-    //       async (rider) => await mapRider(riders, rider)
-    //     )
-    //   );
-
-    //   responses.push(mappedSectorFemaleFlatsTimes);
-    // }
-
-    // if (includeHillTime) {
-    //   let mensHillTimes = await fetch(
-    //     `https://our.sqorz.com/json/leaderboard/${weekendRaceID}/usabmx?eventType=combined&sortBy=hillTime&gender=male`
-    //   ).then(async (r) => {
-    //     try {
-    //       const text = await r.text();
-    //       return await JSON.parse(text);
-    //     } catch (err) {
-    //       return [];
-    //     }
-    //   });
-
-    //   const mappedMensHillTimes = await Promise.all(
-    //     mensHillTimes.map(async (rider) => await mapRider(riders, rider))
-    //   );
-
-    //   responses.push(mappedMensHillTimes);
-
-    //   let womensHillTimes = await fetch(
-    //     `https://our.sqorz.com/json/leaderboard/${weekendRaceID}/usabmx?eventType=combined&sortBy=hillTime&gender=female`
-    //   ).then(async (r) => {
-    //     try {
-    //       const text = await r.text();
-    //       return await JSON.parse(text);
-    //     } catch (err) {
-    //       return [];
-    //     }
-    //   });
-
-    //   const mappedWomensHillTimes = await Promise.all(
-    //     womensHillTimes.map(async (rider) => await mapRider(riders, rider))
-    //   );
-
-    //   responses.push(mappedWomensHillTimes);
-
-    //   let mensFlatsHillTimes = await fetch(
-    //     `https://our.sqorz.com/json/leaderboard/${weekendRaceID}/usabmx?eventType=combined&sortBy=hillTime&gender=male&maxAge=12`
-    //   ).then(async (r) => {
-    //     try {
-    //       const text = await r.text();
-    //       return await JSON.parse(text);
-    //     } catch (err) {
-    //       return [];
-    //     }
-    //   });
-
-    //   const mappedMensFlatsHillTimes = await Promise.all(
-    //     mensFlatsHillTimes.map(async (rider) => await mapRider(riders, rider))
-    //   );
-
-    //   responses.push(mappedMensFlatsHillTimes);
-
-    //   let womensFlatsHillTimes = await fetch(
-    //     `https://our.sqorz.com/json/leaderboard/${weekendRaceID}/usabmx?eventType=combined&sortBy=hillTime&gender=female&maxAge=12`
-    //   ).then(async (r) => {
-    //     try {
-    //       const text = await r.text();
-    //       return await JSON.parse(text);
-    //     } catch (err) {
-    //       return [];
-    //     }
-    //   });
-
-    //   const mappedWomensFlatsHillTimes = await Promise.all(
-    //     womensFlatsHillTimes.map(async (rider) => await mapRider(riders, rider))
-    //   );
-
-    //   responses.push(mappedWomensFlatsHillTimes);
-    // }
-
-    responses.forEach(async (response, idx) => {
-      const data = await Promise.all(
-        response.map(async (r) => {
-          const { id, ...props } = r;
-          const rider = await mapRider(riders, r);
-          return { ...props, ...rider };
-        })
-      );
+    responses.forEach((response, idx) => {
+      const data = response.map((r) => {
+        const { id, ...props } = r;
+        return { ...props };
+      });
 
       fs.writeFileSync(
         path.resolve(outputFile, `${classes[idx].replaceAll(" ", "_")}.json`),
