@@ -381,12 +381,12 @@ async function poll(opts) {
           .then((r) => r.json())
           .catch((e) => []),
         fetch(
-          `https://our.sqorz.com/json/leaderboard/${weekendRaceID}/usabmx?eventType=combined&sortBy=sectorTime&gender=male&maxAge=12`
+          `https://our.sqorz.com/json/leaderboard/${raceID}/usabmx?eventType=combined&sortBy=sectorTime&gender=male&maxAge=12`
         )
           .then((r) => r.json())
           .catch((e) => []),
         fetch(
-          `https://our.sqorz.com/json/leaderboard/${weekendRaceID}/usabmx?eventType=combined&sortBy=sectorTime&gender=female&maxAge=12`
+          `https://our.sqorz.com/json/leaderboard/${raceID}/usabmx?eventType=combined&sortBy=sectorTime&gender=female&maxAge=12`
         )
           .then((r) => r.json())
           .catch((e) => []),
