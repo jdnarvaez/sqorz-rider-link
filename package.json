@@ -1,7 +1,7 @@
 {
   "name": "sqorz-rider-link",
   "productName": "sqorz-rider-link",
-  "version": "0.0.27",
+  "version": "0.0.28",
   "description": "Utility to output JSON data for vMix from sqorz and USA BMX rider information",
   "license": "MIT",
   "private": false,
