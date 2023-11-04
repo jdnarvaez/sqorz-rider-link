@@ -38,6 +38,10 @@ const Form = () => {
     setEventType(opt);
   }, []);
 
+  const [startLanesURL, setStartLanesURL] = useState(
+    localStorage.getItem("startLanesURL") || ""
+  );
+
   useEffect(() => {
     const selectDirectory = (event, args) => {
       setOutputFile(args);
@@ -69,6 +73,7 @@ const Form = () => {
           includeSectorTime,
           includeHillTime,
           eventType: eventType.value,
+          startLanesURL,
         },
         opts
       )
@@ -221,6 +226,20 @@ const Form = () => {
           <div className="slider"></div>
         </label>
         <div>Include hill time</div>
+      </div>
+
+      <div className="formInput">
+        <label for="weekendRaceId">Start Lanes URL</label>
+        <input
+          type="url"
+          id="weekendRaceId"
+          placeholder="Start Lanes URL"
+          value={startLanesURL}
+          onChange={(e) => {
+            setStartLanesURL(e.target.value);
+            localStorage.setItem("startLanesURL", e.target.value);
+          }}
+        />
       </div>
 
       <div className="buttons">

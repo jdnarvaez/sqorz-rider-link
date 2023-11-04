@@ -62,7 +62,7 @@ function createWindow() {
   // Create the browser window.
   mainWindow = new BrowserWindow({
     width: 800,
-    height: 550,
+    height: 600,
     show: false,
     webPreferences: {
       nodeIntegration: true,
@@ -233,6 +233,40 @@ async function mapRider(riders, rider) {
   };
 }
 
+async function parseStateLanes(outputFile, startLanesURL) {
+  if (!startLanesURL) {
+    return;
+  }
+
+  try {
+    const response = fetch(startLanesURL);
+    const races = await response.json();
+
+    races.map(async ({ raceName, className, riders = [] }) => {
+      const csv = riders
+        .sort((a, b) => a.lane - b.lane)
+        .map(({ givenName, lane, familyName, plate, countryCode }) => {
+          return [
+            `${raceName}`,
+            `${className}`,
+            `${lane}`,
+            `${givenName} ${familyName}`,
+            `${plate}`,
+            `${countryCode}`,
+            `https://art-department-usabmx.s3.us-west-1.amazonaws.com/country_flags/${countryCode}.png`,
+          ].join(",");
+        })
+        .join("\n");
+      fs.writeFileSync(
+        path.resolve(outputFile, `${raceName}_${className}_start_lanes.csv`),
+        csv
+      );
+    });
+  } catch (err) {
+    console.error(err);
+  }
+}
+
 async function poll(opts) {
   try {
     if (!polling) {
@@ -247,6 +281,7 @@ async function poll(opts) {
       includeSectorTime,
       includeHillTime,
       eventType = "race",
+      startLanesURL,
     } = opts;
 
     let classes = [
@@ -447,6 +482,8 @@ async function poll(opts) {
     } catch (err) {
       log.error(err);
     }
+
+    await parseStateLanes(outputFile, startLanesURL);
 
     intervalId = setTimeout(() => poll(opts), 10 * 1000);
   } catch (err) {
