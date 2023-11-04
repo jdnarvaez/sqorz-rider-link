@@ -242,24 +242,34 @@ async function parseStateLanes(outputFile, startLanesURL, ascending = true) {
     const response = await fetch(startLanesURL);
     const races = await response.json();
 
-    const csv = races
-      .map(({ raceName, className, riders = [] }) => {
-        return riders
-          .sort((a, b) => (ascending ? a.lane - b.lane : b.lane - a.lane))
-          .map(({ givenName, lane, familyName, plate, countryCode }) => {
-            return [
-              `${raceName}`,
-              `${className}`,
-              `${lane}`,
-              `${givenName} ${familyName}`,
-              `${plate}`,
-              `${countryCode}`,
-              `https://art-department-usabmx.s3.us-west-1.amazonaws.com/country_flags/${countryCode}.png`,
-            ].join(",");
-          });
-      })
-      .flat()
-      .join("\n");
+    const csv = [
+      [
+        "raceName",
+        "className",
+        "riders_lane",
+        "riders_Name",
+        "riders_plate",
+        "riders_countryCode",
+        "Flag_url",
+      ].join(","),
+      ...races
+        .map(({ raceName, className, riders = [] }) => {
+          return riders
+            .sort((a, b) => (ascending ? a.lane - b.lane : b.lane - a.lane))
+            .map(({ givenName, lane, familyName, plate, countryCode }) => {
+              return [
+                `${raceName}`,
+                `${className}`,
+                `${lane}`,
+                `${givenName} ${familyName}`,
+                `${plate}`,
+                `${countryCode}`,
+                `https://art-department-usabmx.s3.us-west-1.amazonaws.com/country_flags/${countryCode}.png`,
+              ].join(",");
+            });
+        })
+        .flat(),
+    ].join("\n");
 
     fs.writeFileSync(path.resolve(outputFile, `Start_Lanes.csv`), csv);
   } catch (err) {
