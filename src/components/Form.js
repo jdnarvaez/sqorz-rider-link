@@ -18,6 +18,14 @@ const Form = () => {
     localStorage.getItem("outputFile") || ""
   );
 
+  useEffect(() => {
+    localStorage.setItem("outputFile", outputFile);
+  }, [outputFile]);
+
+  useEffect(() => {
+    localStorage.setItem("riderCSVFile", riderCSVFile);
+  }, [riderCSVFile]);
+
   const [includeSectorTime, setIncludeSectorTime] = useState(true);
 
   const [includeHillTime, setIncludeHillTime] = useState(true);
@@ -40,6 +48,10 @@ const Form = () => {
 
   const [startLanesURL, setStartLanesURL] = useState(
     localStorage.getItem("startLanesURL") || ""
+  );
+
+  const [startLanesAscending, setStartLanesAscending] = useState(
+    JSON.parse(localStorage.getItem("startLanesAscending") || "true")
   );
 
   useEffect(() => {
@@ -74,6 +86,7 @@ const Form = () => {
           includeHillTime,
           eventType: eventType.value,
           startLanesURL,
+          startLanesAscending,
         },
         opts
       )
@@ -110,6 +123,16 @@ const Form = () => {
     if (polling) {
       stop();
       start({ includeHillTime: shouldIncludeHillTime });
+    }
+  };
+
+  const toggleStartLanesAscending = () => {
+    const isStartLanesAscending = !startLanesAscending;
+    setStartLanesAscending(isStartLanesAscending);
+
+    if (polling) {
+      stop();
+      start({ startLanesAscending: isStartLanesAscending });
     }
   };
 
@@ -171,7 +194,6 @@ const Form = () => {
             value={outputFile}
             onChange={(e) => {
               setOutputFile(e.target.value);
-              localStorage.setItem("outputFile", e.target.value);
             }}
           />
         </div>
@@ -240,6 +262,26 @@ const Form = () => {
             localStorage.setItem("startLanesURL", e.target.value);
           }}
         />
+      </div>
+
+      <div
+        className="formInput"
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
+          gap: "8px",
+        }}
+      >
+        <label className="switch">
+          <input
+            type="checkbox"
+            checked={startLanesAscending}
+            onChange={toggleStartLanesAscending}
+          />
+          <div className="slider"></div>
+        </label>
+        <div>Ascending Start Lanes (1-8)</div>
       </div>
 
       <div className="buttons">

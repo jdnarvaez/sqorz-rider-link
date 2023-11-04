@@ -62,7 +62,7 @@ function createWindow() {
   // Create the browser window.
   mainWindow = new BrowserWindow({
     width: 800,
-    height: 600,
+    height: 700,
     show: false,
     webPreferences: {
       nodeIntegration: true,
@@ -233,19 +233,19 @@ async function mapRider(riders, rider) {
   };
 }
 
-async function parseStateLanes(outputFile, startLanesURL) {
+async function parseStateLanes(outputFile, startLanesURL, ascending = true) {
   if (!startLanesURL) {
     return;
   }
 
   try {
-    const response = fetch(startLanesURL);
+    const response = await fetch(startLanesURL);
     const races = await response.json();
 
     const csv = races
       .map(({ raceName, className, riders = [] }) => {
         return riders
-          .sort((a, b) => a.lane - b.lane)
+          .sort((a, b) => (ascending ? a.lane - b.lane : b.lane - a.lane))
           .map(({ givenName, lane, familyName, plate, countryCode }) => {
             return [
               `${raceName}`,
@@ -261,7 +261,7 @@ async function parseStateLanes(outputFile, startLanesURL) {
       .flat()
       .join("\n");
 
-    fs.writeFileSync(path.resolve(process.cwd(), `start_lanes.csv`), csv);
+    fs.writeFileSync(path.resolve(outputFile, `Start_Lanes.csv`), csv);
   } catch (err) {
     console.error(err);
   }
@@ -282,6 +282,7 @@ async function poll(opts) {
       includeHillTime,
       eventType = "race",
       startLanesURL,
+      startLanesAscending,
     } = opts;
 
     let classes = [
@@ -483,7 +484,7 @@ async function poll(opts) {
       log.error(err);
     }
 
-    await parseStateLanes(outputFile, startLanesURL);
+    await parseStateLanes(outputFile, startLanesURL, startLanesAscending);
 
     intervalId = setTimeout(() => poll(opts), 10 * 1000);
   } catch (err) {
