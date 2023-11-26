@@ -238,9 +238,23 @@ async function parseStateLanes(outputFile, startLanesURL, ascending = true) {
     return;
   }
 
+  console.log(startLanesURL);
+
   try {
-    const response = await fetch(startLanesURL);
-    const races = await response.json();
+    let url;
+    let races;
+
+    try {
+      url = new URL(startLanesURL);
+      const response = await fetch(startLanesURL);
+      races = await response.json();
+    } catch (e1) {
+      try {
+        races = JSON.parse(fs.readFileSync(path.resolve(startLanesURL)));
+      } catch (err) {
+        return;
+      }
+    }
 
     const csv = [
       [
