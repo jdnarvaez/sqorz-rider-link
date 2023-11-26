@@ -256,17 +256,25 @@ async function parseStateLanes(outputFile, startLanesURL, ascending = true) {
         .map(({ raceName, className, riders = [] }) => {
           return riders
             .sort((a, b) => (ascending ? a.lane - b.lane : b.lane - a.lane))
-            .map(({ givenName, lane, familyName, plate, countryCode }) => {
-              return [
-                `${raceName}`,
-                `${className}`,
-                `${lane}`,
-                `${givenName} ${familyName}`,
-                `${plate}`,
-                `${countryCode}`,
-                `https://art-department-usabmx.s3.us-west-1.amazonaws.com/country_flags/${countryCode}.png`,
-              ].join(",");
-            });
+            .map(
+              ({
+                First_Name: givenName,
+                Lane_Number: lane,
+                Last_Name: familyName,
+                Bike_Number: plate,
+                Country_IOC_3: countryCode,
+              }) => {
+                return [
+                  `${raceName}`,
+                  `${className}`,
+                  `${lane}`,
+                  `${givenName} ${familyName}`,
+                  `${plate}`,
+                  `${countryCode}`,
+                  `https://art-department-usabmx.s3.us-west-1.amazonaws.com/country_flags/${countryCode}.png`,
+                ].join(",");
+              }
+            );
         })
         .flat(),
     ].join("\n");
