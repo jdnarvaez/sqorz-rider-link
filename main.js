@@ -238,8 +238,6 @@ async function parseStateLanes(outputFile, startLanesURL, ascending = true) {
     return;
   }
 
-  console.log(startLanesURL);
-
   try {
     let url;
     let races;
