@@ -506,7 +506,7 @@ async function poll(opts) {
     const top_riders = await Promise.all(
       responses
         // .filter((x) => x.length)
-        .map((response) => mapRider(riders, response[0]))
+        .map((response) => mapRider(riders, response.slice(0, 3)))
     );
 
     try {
