@@ -503,11 +503,19 @@ async function poll(opts) {
       );
     });
 
-    const top_riders = await Promise.all(
-      responses
-        // .filter((x) => x.length)
-        .map((response) => mapRider(riders, response.slice(0, 3)))
-    );
+    const top_riders = [];
+
+    for (let response of responses) {
+      const riders = response.slice(0, 3);
+      const group = [];
+
+      for (let rider of riders) {
+        const mapped = await mapRider(riders, rider);
+        group.push(mapped);
+      }
+
+      top_riders.push(group);
+    }
 
     try {
       fs.writeFileSync(
