@@ -192,6 +192,7 @@ async function mapRider(riders, rider) {
         transponder_data["PHOTO_LINK"].trim()) ||
         GENERIC_PHOTO_URL
     );
+
     const validPhoto = validPhotoURLs.get(photo);
 
     if (validPhoto === false) {
@@ -506,10 +507,10 @@ async function poll(opts) {
     const top_riders = [];
 
     for (let response of responses) {
-      const riders = response.slice(0, 3);
+      const current_top_riders = response.slice(0, 3);
       const group = [];
 
-      for (let rider of riders) {
+      for (let rider of current_top_riders) {
         const mapped = await mapRider(riders, rider);
         group.push(mapped);
       }
