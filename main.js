@@ -521,7 +521,7 @@ async function poll(opts) {
     try {
       fs.writeFileSync(
         path.resolve(outputFile, "top_riders.json"),
-        JSON.stringify(top_riders)
+        JSON.stringify(top_riders.flat())
       );
     } catch (err) {
       log.error(err);
