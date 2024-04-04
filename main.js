@@ -506,13 +506,14 @@ async function poll(opts) {
 
     const top_riders = [];
 
-    for (let response of responses) {
+    for (let idx = 0; idx < responses.length; idx++) {
+      const response = responses[idx];
       const current_top_riders = response.slice(0, 3);
       const group = [];
 
       for (let rider of current_top_riders) {
         const mapped = await mapRider(riders, rider);
-        group.push(mapped);
+        group.push({ ...mapped, class: classes[idx] });
       }
 
       top_riders.push(group);
