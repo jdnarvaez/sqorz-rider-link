@@ -315,7 +315,7 @@ async function poll(opts) {
       outputFile,
       includeSectorTime,
       includeHillTime,
-      eventType = "race",
+      eventType = "combined",
       startLanesURL,
       startLanesAscending,
     } = opts;
@@ -360,133 +360,134 @@ async function poll(opts) {
 
     fs.mkdirSync(outputFile, { recursive: true });
 
+    const fetchTimingData = async ({ raceID, ...params }) => {
+      const base = `https://our.sqorz.com/json/leaderboard/${raceID}/usabmx`;
+      const searchParams = new URLSearchParams();
+
+      Object.entries(params).forEach(([key, value]) => {
+        searchParams.set(key, value);
+      });
+
+      const url = `${base}?${searchParams.toString()}`;
+
+      return fetch(url, {
+        headers: { accept: "application/json" },
+      })
+        .then(async (r) => {
+          if (!r.headers.get("content-type")?.includes("json")) {
+            const msg = await r.text();
+            throw new Error(`Unable to retrieve ${url} \r\n ${msg}`);
+          }
+
+          return r.json();
+        })
+        .catch((e) => {
+          console.error(e);
+          return [];
+        });
+    };
+
     let requests = [
-      fetch(
-        `https://our.sqorz.com/json/leaderboard/${raceID}/usabmx?eventType=${eventType}&proficiencyCode=A`
-      )
-        .then((r) => r.json())
-        .catch((e) => []),
-      fetch(
-        `https://our.sqorz.com/json/leaderboard/${raceID}/usabmx?eventType=${eventType}&proficiencyCode=Z`
-      )
-        .then((r) => r.json())
-        .catch((e) => []),
-      fetch(
-        `https://our.sqorz.com/json/leaderboard/${raceID}/usabmx?eventType=${eventType}&proficiencyCode=V`
-      )
-        .then((r) => r.json())
-        .catch((e) => []),
-      fetch(
-        `https://our.sqorz.com/json/leaderboard/${raceID}/usabmx?eventType=${eventType}&proficiencyCode=H`
-      )
-        .then((r) => r.json())
-        .catch((e) => []),
-      fetch(
-        `https://our.sqorz.com/json/leaderboard/${raceID}/usabmx?eventType=${eventType}&proficiencyCode=C`
-      )
-        .then((r) => r.json())
-        .catch((e) => []),
-      fetch(
-        `https://our.sqorz.com/json/leaderboard/${raceID}/usabmx?eventType=${eventType}&proficiencyCode=N`
-      )
-        .then((r) => r.json())
-        .catch((e) => []),
-      fetch(
-        `https://our.sqorz.com/json/leaderboard/${raceID}/usabmx?eventType=${eventType}&proficiencyCode=I`
-      )
-        .then((r) => r.json())
-        .catch((e) => []),
-      fetch(
-        `https://our.sqorz.com/json/leaderboard/${raceID}/usabmx?eventType=${eventType}&proficiencyCode=G`
-      )
-        .then((r) => r.json())
-        .catch((e) => []),
-      fetch(
-        `https://our.sqorz.com/json/leaderboard/${raceID}/usabmx?eventType=${eventType}&proficiencyCode=E`
-      )
-        .then((r) => r.json())
-        .catch((e) => []),
-      fetch(
-        `https://our.sqorz.com/json/leaderboard/${raceID}/usabmx?eventType=${eventType}&gender=female&minAge=5&maxAge=12`
-      )
-        .then((r) => r.json())
-        .catch((e) => []),
-      fetch(
-        `https://our.sqorz.com/json/leaderboard/${raceID}/usabmx?eventType=${eventType}&gender=male&minAge=5&maxAge=12`
-      )
-        .then((r) => r.json())
-        .catch((e) => []),
-      fetch(
-        `https://our.sqorz.com/json/leaderboard/${weekendRaceID}/usabmx?eventType=${eventType}&gender=female`
-      )
-        .then((r) => r.json())
-        .catch((e) => []),
-      fetch(
-        `https://our.sqorz.com/json/leaderboard/${weekendRaceID}/usabmx?eventType=${eventType}&gender=male`
-      )
-        .then((r) => r.json())
-        .catch((e) => []),
+      fetchTimingData({ raceID, eventType, proficiencyCode: "A" }),
+      fetchTimingData({ raceID, eventType, proficiencyCode: "Z" }),
+      fetchTimingData({ raceID, eventType, proficiencyCode: "V" }),
+      fetchTimingData({ raceID, eventType, proficiencyCode: "H" }),
+      fetchTimingData({ raceID, eventType, proficiencyCode: "C" }),
+      fetchTimingData({ raceID, eventType, proficiencyCode: "N" }),
+      fetchTimingData({ raceID, eventType, proficiencyCode: "I" }),
+      fetchTimingData({ raceID, eventType, proficiencyCode: "G" }),
+      fetchTimingData({ raceID, eventType, proficiencyCode: "E" }),
+      fetchTimingData({
+        raceID,
+        eventType,
+        gender: "female",
+        minAge: "5",
+        maxAge: "12",
+      }),
+      fetchTimingData({
+        raceID,
+        eventType,
+        gender: "male",
+        minAge: "5",
+        maxAge: "12",
+      }),
+      fetchTimingData({ raceID, eventType, gender: "female" }),
+      fetchTimingData({ raceID, eventType, gender: "male" }),
     ];
 
     if (includeSectorTime) {
       requests = [
         ...requests,
-        fetch(
-          `https://our.sqorz.com/json/leaderboard/${weekendRaceID}/usabmx?eventType=combined&sortBy=sectorTime&gender=female`
-        )
-          .then((r) => r.json())
-          .catch((e) => []),
-        fetch(
-          `https://our.sqorz.com/json/leaderboard/${weekendRaceID}/usabmx?eventType=combined&sortBy=sectorTime&gender=male`
-        )
-          .then((r) => r.json())
-          .catch((e) => []),
-        fetch(
-          `https://our.sqorz.com/json/leaderboard/${raceID}/usabmx?eventType=combined&sortBy=sectorTime&gender=male`
-        )
-          .then((r) => r.json())
-          .catch((e) => []),
-        fetch(
-          `https://our.sqorz.com/json/leaderboard/${raceID}/usabmx?eventType=combined&sortBy=sectorTime&gender=female`
-        )
-          .then((r) => r.json())
-          .catch((e) => []),
-        fetch(
-          `https://our.sqorz.com/json/leaderboard/${raceID}/usabmx?eventType=combined&sortBy=sectorTime&gender=male&maxAge=12`
-        )
-          .then((r) => r.json())
-          .catch((e) => []),
-        fetch(
-          `https://our.sqorz.com/json/leaderboard/${raceID}/usabmx?eventType=combined&sortBy=sectorTime&gender=female&maxAge=12`
-        )
-          .then((r) => r.json())
-          .catch((e) => []),
+        fetchTimingData({
+          raceID: weekendRaceID,
+          eventType: "combined",
+          gender: "female",
+          sortBy: "sectorTime",
+        }),
+        fetchTimingData({
+          raceID: weekendRaceID,
+          eventType: "combined",
+          gender: "male",
+          sortBy: "sectorTime",
+        }),
+        fetchTimingData({
+          raceID,
+          eventType: "combined",
+          gender: "male",
+          sortBy: "sectorTime",
+        }),
+        fetchTimingData({
+          raceID,
+          eventType: "combined",
+          gender: "female",
+          sortBy: "sectorTime",
+        }),
+        fetchTimingData({
+          raceID,
+          eventType: "combined",
+          gender: "male",
+          sortBy: "sectorTime",
+          maxAge: "12",
+        }),
+        fetchTimingData({
+          raceID,
+          eventType: "combined",
+          gender: "female",
+          sortBy: "sectorTime",
+          maxAge: "12",
+        }),
       ];
     }
 
     if (includeHillTime) {
       requests = [
         ...requests,
-        fetch(
-          `https://our.sqorz.com/json/leaderboard/${weekendRaceID}/usabmx?eventType=combined&sortBy=hillTime&gender=male`
-        )
-          .then((r) => r.json())
-          .catch((e) => []),
-        fetch(
-          `https://our.sqorz.com/json/leaderboard/${weekendRaceID}/usabmx?eventType=combined&sortBy=hillTime&gender=female`
-        )
-          .then((r) => r.json())
-          .catch((e) => []),
-        fetch(
-          `https://our.sqorz.com/json/leaderboard/${weekendRaceID}/usabmx?eventType=combined&sortBy=hillTime&gender=male&maxAge=12`
-        )
-          .then((r) => r.json())
-          .catch((e) => []),
-        fetch(
-          `https://our.sqorz.com/json/leaderboard/${weekendRaceID}/usabmx?eventType=combined&sortBy=hillTime&gender=female&maxAge=12`
-        )
-          .then((r) => r.json())
-          .catch((e) => []),
+        fetchTimingData({
+          raceID: weekendRaceID,
+          eventType: "combined",
+          gender: "male",
+          sortBy: "hillTime",
+        }),
+        fetchTimingData({
+          raceID: weekendRaceID,
+          eventType: "combined",
+          gender: "female",
+          sortBy: "hillTime",
+        }),
+        fetchTimingData({
+          raceID: weekendRaceID,
+          eventType: "combined",
+          gender: "male",
+          sortBy: "hillTime",
+          maxAge: "12",
+        }),
+        fetchTimingData({
+          raceID: weekendRaceID,
+          eventType: "combined",
+          gender: "female",
+          sortBy: "hillTime",
+          maxAge: "12",
+        }),
       ];
     }
 

@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { ipcRenderer as ipc } from "electron";
-import Select from "react-dropdown-select";
 
 import "./Form.css";
 
@@ -29,22 +28,6 @@ const Form = () => {
   const [includeSectorTime, setIncludeSectorTime] = useState(true);
 
   const [includeHillTime, setIncludeHillTime] = useState(true);
-
-  const eventTypeOptions = [
-    { label: "Race", value: "race" },
-    { label: "Training", value: "training" },
-  ];
-
-  const [eventType, setEventType] = useState(
-    eventTypeOptions.find(
-      (opt) => opt.value === localStorage.getItem("eventType")
-    ) || eventTypeOptions[0]
-  );
-
-  const selectEventType = useCallback((opt) => {
-    localStorage.setItem("eventType", opt.value);
-    setEventType(opt);
-  }, []);
 
   const [startLanesURL, setStartLanesURL] = useState(
     localStorage.getItem("startLanesURL") || ""
@@ -84,7 +67,6 @@ const Form = () => {
           outputFile,
           includeSectorTime,
           includeHillTime,
-          eventType: eventType.value,
           startLanesURL,
           startLanesAscending,
         },
@@ -195,17 +177,6 @@ const Form = () => {
             onChange={(e) => {
               setOutputFile(e.target.value);
             }}
-          />
-        </div>
-      </div>
-
-      <div className="formInput">
-        <label>Event Type</label>
-        <div className="inputGroup">
-          <Select
-            options={eventTypeOptions}
-            onChange={(values) => selectEventType(values[0])}
-            values={[eventType]}
           />
         </div>
       </div>
