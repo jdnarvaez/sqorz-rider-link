@@ -518,6 +518,12 @@ async function poll(opts) {
         group.push({ ...mapped, class: classes[idx] });
       }
 
+      if (group.length === 0) {
+        group.push({
+          class: classes[idx],
+        });
+      }
+
       top_riders.push(group);
     }
 
