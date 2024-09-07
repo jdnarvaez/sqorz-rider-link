@@ -412,8 +412,8 @@ async function poll(opts) {
         minAge: "5",
         maxAge: "12",
       }),
-      fetchTimingData({ raceID, eventType, gender: "female" }),
-      fetchTimingData({ raceID, eventType, gender: "male" }),
+      fetchTimingData({ raceID: weekendRaceID, eventType, gender: "female" }),
+      fetchTimingData({ raceID: weekendRaceID, eventType, gender: "male" }),
     ];
 
     if (includeSectorTime) {
