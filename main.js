@@ -318,6 +318,7 @@ async function poll(opts) {
       eventType = "combined",
       startLanesURL,
       startLanesAscending,
+      numberOfTopRiders = 3,
     } = opts;
 
     let classes = [
@@ -509,7 +510,7 @@ async function poll(opts) {
 
     for (let idx = 0; idx < responses.length; idx++) {
       const response = responses[idx];
-      const current_top_riders = response.slice(0, 3);
+      const current_top_riders = response.slice(0, numberOfTopRiders);
       const group = [];
 
       for (let rider of current_top_riders) {

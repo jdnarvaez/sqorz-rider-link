@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { ipcRenderer as ipc } from "electron";
+import Select from "react-dropdown-select";
 
 import "./Form.css";
 
@@ -28,6 +29,19 @@ const Form = () => {
   const [includeSectorTime, setIncludeSectorTime] = useState(true);
 
   const [includeHillTime, setIncludeHillTime] = useState(true);
+
+  const topRiderOptions = [
+    { label: "1", value: 1 },
+    { label: "3", value: 3 },
+  ];
+
+  const [numberOfTopRiders, setNumberOfTopRiders] = useState(
+    topRiderOptions.find(
+      (opt) =>
+        opt.value ===
+        parseInt(localStorage.getItem("numberOfTopRiders") || "1", 10)
+    ) || topRiderOptions[0]
+  );
 
   const [startLanesURL, setStartLanesURL] = useState(
     localStorage.getItem("startLanesURL") || ""
@@ -67,8 +81,10 @@ const Form = () => {
           outputFile,
           includeSectorTime,
           includeHillTime,
+          eventType: "combined",
           startLanesURL,
           startLanesAscending,
+          numberOfTopRiders: numberOfTopRiders.value,
         },
         opts
       )
@@ -87,6 +103,19 @@ const Form = () => {
   const browseForOutputDirectory = () => {
     ipc.send("select-directory", "");
   };
+
+  const selectNumberOfTopRiders = useCallback(
+    (opt) => {
+      localStorage.setItem("numberOfTopRiders", opt.value.toString());
+      setNumberOfTopRiders(opt);
+
+      if (polling) {
+        stop();
+        start({ numberOfTopRiders: opt.value });
+      }
+    },
+    [polling, stop, start]
+  );
 
   const toggleSectorTime = () => {
     const shouldIncludeSectorTime = !includeSectorTime;
@@ -177,6 +206,17 @@ const Form = () => {
             onChange={(e) => {
               setOutputFile(e.target.value);
             }}
+          />
+        </div>
+      </div>
+
+      <div className="formInput">
+        <label>Number of top riders</label>
+        <div className="inputGroup">
+          <Select
+            options={topRiderOptions}
+            onChange={(values) => selectNumberOfTopRiders(values[0])}
+            values={[numberOfTopRiders]}
           />
         </div>
       </div>
